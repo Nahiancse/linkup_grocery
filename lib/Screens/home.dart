@@ -80,21 +80,21 @@ class _HomeState extends State<Home> {
                                     ),
                                     Expanded(
                                         child: Container(
-                                      padding: EdgeInsets.only(left: 10),
+                                      // padding: EdgeInsets.only(left: 10),
                                       child: Container(
                                         child: Row(
                                           children: [
                                             Expanded(
-                                              flex: 4,
+                                              flex: 2,
                                               child: Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
-                                                        .spaceBetween,
+                                                        .start,
                                                 children: [
                                                   Expanded(
-                                                    flex: 2,
+                                                    flex: 1,
                                                     child: Center(
                                                       child: FittedBox(
                                                           fit: BoxFit.cover,
@@ -136,6 +136,47 @@ class _HomeState extends State<Home> {
                                                   ),
                                                 ],
                                               ),
+                                            ),
+
+                                            Expanded(
+                                              flex:4,
+                                              child:Center(
+                                                child:Container(
+                                                  child:Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Center(
+                                              child: FittedBox(
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  
+                                                },
+                                                icon: Icon(
+                                                  Icons.remove_circle_outline,
+                                                  color: Color(0xFFff666b),
+                                                  size: 35,
+                                                ),
+                                              ),
+                                            )),
+                                            Center(
+                                        child: FittedBox(
+                                          child: IconButton(
+                                            onPressed: () {
+                                             
+                                            },
+                                            icon: Icon(
+                                              Icons.add_circle_outline,
+                                              color: Color(0xFFff666b),
+                                              size: 35,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                                    ],
+                                                  )
+                                                )
+                                              )
                                             )
                                           ],
                                         ),
