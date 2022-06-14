@@ -1,6 +1,13 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:link_chaldal/Screens/productDetail.dart';
+import 'package:link_chaldal/cart/cart_provider.dart';
 import 'package:link_chaldal/model/popular.dart';
+import 'package:provider/provider.dart';
+
+import '../cart/cart_model.dart';
+import '../cart/cart_screen.dart';
+import '../cart/db_helper.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,11 +17,36 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  DBHelper? dbHelper = DBHelper();
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+          actions: [
+            InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CartScreen()));
+              },
+              child: Center(
+                child: Badge(
+                  showBadge: true,
+                  badgeContent: Consumer<CartProvider>(
+                    builder: (context, value, child) {
+                      return Text(value.getCounter().toString(),
+                          style: TextStyle(color: Colors.white));
+                    },
+                  ),
+                  animationType: BadgeAnimationType.fade,
+                  animationDuration: Duration(milliseconds: 300),
+                  child: Icon(Icons.shopping_bag_outlined),
+                ),
+              ),
+            ),
+            SizedBox(width: 20.0)
+          ],
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           title: Text('')),
@@ -40,12 +72,14 @@ class _HomeState extends State<Home> {
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
+                          print(index);
                           return ProductDetail(
-                            name: popularList[index].name,
-                            image: popularList[index].img,
-                            price: popularList[index].price,
-                            quantity: popularList[index].quantity,
-                          );
+                            description:popularList[index].description,
+                              name: popularList[index].name,
+                              image: popularList[index].img,
+                              price: popularList[index].price,
+                              quantity: popularList[index].quantity,
+                              index: index);
                         }));
                       },
                       child: Column(
@@ -163,23 +197,101 @@ class _HomeState extends State<Home> {
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.end,
                                                     children: [
-                                                      // Center(
-                                                      //     child: FittedBox(
-                                                      //   child: IconButton(
-                                                      //     onPressed: () {},
-                                                      //     icon: Icon(
-                                                      //       Icons
-                                                      //           .remove_circle_outline,
-                                                      //       color:
-                                                      //           Color(0xFFff666b),
-                                                      //       size: 35,
-                                                      //     ),
-                                                      //   ),
-                                                      // )),
                                                       Center(
                                                         child: FittedBox(
                                                           child: IconButton(
-                                                            onPressed: () {},
+                                                            onPressed: () {
+                                                              print(index);
+                                                              print(index);
+                                                              print(popularList[
+                                                                      index]
+                                                                  .name
+                                                                  .toString());
+                                                              print(popularList[
+                                                                      index]
+                                                                  .price
+                                                                  .toString());
+                                                              print(popularList[
+                                                                      index]
+                                                                  .price);
+                                                              print('1');
+
+                                                              print(popularList[
+                                                                      index]
+                                                                  .img
+                                                                  .toString());
+
+                                                              dbHelper!
+                                                                  .insert(Cart(
+                                                                      id: index,
+                                                                      productId:
+                                                                          index
+                                                                              .toString(),
+                                                                      productName: popularList[
+                                                                              index]
+                                                                          .name
+                                                                          .toString(),
+                                                                      initialPrice:
+                                                                          popularList[index]
+                                                                              .price,
+                                                                      productPrice:
+                                                                          popularList[index]
+                                                                              .price,
+                                                                      quantity:
+                                                                          1,
+                                                                      unitTag:
+                                                                          '',
+                                                                      image: popularList[
+                                                                              index]
+                                                                          .img
+                                                                          .toString()))
+                                                                  .then(
+                                                                      (value) {
+                                                                cart.addTotalPrice(double.parse(
+                                                                    popularList[
+                                                                            index]
+                                                                        .price
+                                                                        .toString()));
+                                                                cart.addCounter();
+
+                                                                final snackBar =
+                                                                    SnackBar(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  content: Text(
+                                                                      'Product is added to cart'),
+                                                                  duration:
+                                                                      Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                );
+
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        snackBar);
+                                                              }).onError((error,
+                                                                      stackTrace) {
+                                                                print("error" +
+                                                                    error
+                                                                        .toString());
+                                                                final snackBar = SnackBar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .red,
+                                                                    content: Text(
+                                                                        'Product is already added in cart'),
+                                                                    duration: Duration(
+                                                                        seconds:
+                                                                            1));
+
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        snackBar);
+                                                              });
+                                                            },
                                                             icon: Icon(
                                                               Icons
                                                                   .add_circle_outline,
@@ -240,7 +352,7 @@ class _HomeState extends State<Home> {
             Expanded(
               flex: 0,
               child: SizedBox(
-                  height: 180,
+                  height: 200,
                   child: Column(
                     children: [
                       ListTile(
@@ -251,7 +363,7 @@ class _HomeState extends State<Home> {
                         ),
                         title: Text(
                           'Login',
-                          style: TextStyle(color: Colors.purple, fontSize: 20),
+                          style: TextStyle(color: Colors.purple, fontSize: 18),
                         ),
                       ),
                       ListTile(
@@ -278,35 +390,6 @@ class _HomeState extends State<Home> {
                     ],
                   )),
             ),
-            // Expanded(
-            //   flex: 1,
-            //   child: Container(
-            //       width: MediaQuery.of(context).size.width * 0.85,
-            //       child: Column(
-            //     children: [
-            //       Row(
-            //         children: [
-            //           Icon(
-            //             Icons.person_pin,
-            //             color: Colors.purple,
-            //           ),
-            //           Text(
-            //             'Login',
-            //             style: TextStyle(color: Colors.purple, fontSize: 18),
-            //           )
-            //         ],
-            //       )
-            //     ],
-            //   )
-            //       //  DrawerHeader(
-            //       //   decoration: BoxDecoration(
-            //       //       image: DecorationImage(
-            //       //           image: AssetImage("images/header.jpeg"),
-            //       //           fit: BoxFit.cover)),
-            //       //   child: Text("Header"),
-            //       // ),
-            //       ),
-            // ),
             Expanded(
               flex: 2,
               child: ListView(children: [
@@ -492,60 +575,6 @@ class _HomeState extends State<Home> {
                     )
                   ],
                 ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // ),
-                // ListTile(
-                //   title: Text("Home"),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //   },
-                // )
               ]),
             )
           ],
