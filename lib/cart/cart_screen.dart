@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 
 import 'package:flutter/material.dart';
+import 'package:link_chaldal/cart/checkout.dart';
 import 'package:provider/provider.dart';
 
 import 'cart_model.dart';
@@ -351,11 +352,36 @@ class _CartScreenState extends State<CartScreen> {
                     ReusableWidget(
                       title: 'Total',
                       value: r'$' + value.getTotalPrice().toStringAsFixed(2),
-                    )
+                    ),
+                    InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Checkout(subtotal: value.getTotalPrice().toInt());
+                }));
+              },
+              child: Container(
+                height: 40,
+                width: 150,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Text(
+                  'Buy Now',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
                   ],
+                  
                 ),
               );
-            })
+            }),
+            
           ],
         ),
       ),
